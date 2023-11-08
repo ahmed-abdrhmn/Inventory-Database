@@ -1,0 +1,4 @@
+#artifact files
+bin/
+obj/
+.vscode/
