@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.Xml;
 using API.Models;
+using API.Models.CreationDtos;
 
 namespace API.Controllers
 {
@@ -69,7 +70,6 @@ namespace API.Controllers
             int result = _inventoryDbContext.InventoryInDetails
                             .Where(d => d.InventoryInDetailId == id)
                             .ExecuteDelete(); // <<-- Brand new feature in EF core 7
-            System.Console.WriteLine($"Deleted Records {result}");
             
             if(result > 0){
                 return Ok($"Document number {id} successfully deleted");
@@ -81,7 +81,9 @@ namespace API.Controllers
         [HttpPost]
         [Route("New")]
         public IActionResult CreateNewInventoryIn(InventoryInDetailCreationDto args){      
-            InventoryInHeader? relatedHeader = (from i in _inventoryDbContext.InventoryInHeaders.Include("Branch") // <-- Needed for full response
+            InventoryInHeader? relatedHeader = (from i in _inventoryDbContext.InventoryInHeaders
+                    .Include("Branch") // <-- Needed for full response
+                    .Include("InventoryInDetails") //<<--To calculate TotalValue Properly
                 where i.InventoryInHeaderId == args.InventoryInHeaderId
                 select i).SingleOrDefault();
             
@@ -138,7 +140,9 @@ namespace API.Controllers
                 return NotFound("No IdentityInDetail with the Id you supplied was found");
             }
             
-            InventoryInHeader? relatedHeader = (from i in _inventoryDbContext.InventoryInHeaders.Include("Branch") //<<--Needed for full response
+            InventoryInHeader? relatedHeader = (from i in _inventoryDbContext.InventoryInHeaders
+                    .Include("Branch") //<<--Needed for full response
+                    .Include("InventoryInDetails") //<<--To calculate TotalValue Properly
                 where i.InventoryInHeaderId == args.InventoryInHeaderId
                 select i).SingleOrDefault();
             

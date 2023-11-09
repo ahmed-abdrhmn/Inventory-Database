@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20231108065504_FixForeignRelationship")]
-    partial class FixForeignRelationship
+    [Migration("20231109053356_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,6 +134,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Package", b =>
                 {
                     b.Property<byte>("PackageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")

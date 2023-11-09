@@ -131,6 +131,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Package", b =>
                 {
                     b.Property<byte>("PackageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")

@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Models
+namespace API.Models.CreationDtos
 {
     public class InventoryInDetailCreationDto
     {
         //We have to make these fields nullable for the validation to work.
-        [Required(ErrorMessage = "A numeric InventoryHeaderId field must be included.")]
+        [Required(ErrorMessage = "A numeric InventoryInHeaderId field must be included.")]
         public short? InventoryInHeaderId { get; set; }
         [Required(ErrorMessage = "A numeric Serial field must be included.")]
         public int? Serial { get; set; }

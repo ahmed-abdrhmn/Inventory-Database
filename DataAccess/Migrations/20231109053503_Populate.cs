@@ -34,14 +34,14 @@ namespace DataAccess.Migrations
 
             migrationBuilder.Sql(@"
                 INSERT INTO InventoryInHeaders VALUES
-                    (1,1,'2023-07-12','Some Random Reference',150,'No Remarks'),
-                    (2,3,'2023-12-07','Another Random Reference',15,'All Remarks');
+                    (1,1,'2023-07-12','Some Random Reference','No Remarks'),
+                    (2,3,'2023-12-07','Another Random Reference','All Remarks');
             ");
 
             migrationBuilder.Sql(@"
                 INSERT INTO InventoryInDetails VALUES
-                    (1,1,123,2,2,'2323232323','4545454545','2024-05-12',12.4,19.2,100.5),
-                    (2,2,123,3,3,'67676767676','9090909090','2030-01-11',78.9,0.12,100.5);
+                    (1,1,123,2,2,'2323232323','4545454545','2024-05-12',12.4,19.2),
+                    (2,2,123,3,3,'67676767676','9090909090','2030-01-11',78.9,0.12);
             ");
         }
 

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20231107171935_InitCreate")]
-    partial class InitCreate
+    [Migration("20231109053503_Populate")]
+    partial class Populate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,10 +76,6 @@ namespace DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<decimal>("TotalValue")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
-
                     b.HasKey("InventoryInDetailId");
 
                     b.HasIndex("InventoryInHeaderId");
@@ -113,10 +109,6 @@ namespace DataAccess.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<decimal>("TotalValue")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
-
                     b.HasKey("InventoryInHeaderId");
 
                     b.HasIndex("BranchId");
@@ -142,6 +134,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Package", b =>
                 {
                     b.Property<byte>("PackageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
@@ -156,7 +149,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.InventoryInDetail", b =>
                 {
                     b.HasOne("DataAccess.Models.InventoryInHeader", "InventoryInHeader")
-                        .WithMany()
+                        .WithMany("InventoryInDetails")
                         .HasForeignKey("InventoryInHeaderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -194,6 +187,11 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Models.Branch", b =>
                 {
                     b.Navigation("InventoryInHeaders");
+                });
+
+            modelBuilder.Entity("DataAccess.Models.InventoryInHeader", b =>
+                {
+                    b.Navigation("InventoryInDetails");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Item", b =>
