@@ -17,7 +17,8 @@ Do the following steps:
     > Note: the migration will pre populate your database with objects, so you can immediately begin using the GET endpoints.
 
 5. To run the program, enter this command in the terminal:
-    dotnet run --project API
+
+        dotnet run --project API
 
 # Endpoints
 ## Inventory (Correspond to InventoryInDetail)
