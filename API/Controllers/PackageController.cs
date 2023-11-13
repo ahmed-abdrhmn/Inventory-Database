@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.CreationDtos;
 using Microsoft.AspNetCore.Mvc;
-using API.Models.CreationDtos;
-using DataAccess.Data;
-using DataAccess.Models;
-using API.Models;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 namespace API.Controllers
 {
@@ -15,71 +13,47 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class PackageController : ControllerBase
     {
-        private readonly InventoryDbContext _inventoryDbContext; //depends injection
+        //Interfaces with service layer are injected at runtime
+        private readonly IPackageRepo _iPackageRepo;
 
-        public PackageController(InventoryDbContext inventoryDbContext){
-            this._inventoryDbContext = inventoryDbContext;
-        }
+        public PackageController(
+            IPackageRepo iPackageRepo){
+                _iPackageRepo = iPackageRepo;
+            }
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetAllPackages(){
-            var Packages = from i in _inventoryDbContext.Packages select PackageDto.FromEntity(i);
-            return Ok(Packages);
+        public IActionResult GetAllPackagees(){
+            var result = _iPackageRepo.GetAll();
+            return Ok(result);
         }
 
         [HttpGet]
-        [Route("ById/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult GetPackageById(int id){
-            var Package = (from i in _inventoryDbContext.Packages where i.PackageId == id select PackageDto.FromEntity(i))
-                            .SingleOrDefault();
-
-            if (Package is not null){
-                return Ok(Package);
-            }else{
-                return NotFound("Not Package with supplied Id exisits");
-            }
+            var result = _iPackageRepo.Get(id);
+            return Ok(result);
         }
 
         [HttpDelete]
-        [Route("Delete/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult DeletePackage(int id){
-            int result = _inventoryDbContext.Packages
-                            .Where(d => d.PackageId == id)
-                            .ExecuteDelete();
-            
-            if(result > 0){
-                return Ok($"Package number {id} successfully deleted");
-            }else{
-                return NotFound("No Package with supplied Id was found");
-            }
+            _iPackageRepo.Delete(id);
+            return NoContent();
         }
 
         [HttpPost]
-        [Route("New")]
+        [Route("")]
         public IActionResult NewPackage(PackageCreationDto args){
-            var toAdd = new Package(){
-                Name = args.Name!
-            };
-
-            _inventoryDbContext.Packages.Add(toAdd);
-            _inventoryDbContext.SaveChanges();
-            return Ok(PackageDto.FromEntity(toAdd)); //this will include the id of the newly created Package
+            var result = _iPackageRepo.Create(args);
+            return Ok(result);
         }
 
         [HttpPut]
-        [Route("Update/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult UpdatePackage(int id, PackageCreationDto args){
-            var toUpdate = (from i in _inventoryDbContext.Packages where i.PackageId == id select i)
-                .SingleOrDefault();
-
-            if (toUpdate is null){
-                return NotFound("No Package with supplied Id was found");
-            }else{
-                toUpdate.Name = args.Name!;
-                _inventoryDbContext.SaveChanges();
-                return Ok(PackageDto.FromEntity(toUpdate)); //this will include the id of the newly created Package
-            }
-        }               
+            var result = _iPackageRepo.Update(id,args);
+            return Ok(result);
+        }        
     }
 }

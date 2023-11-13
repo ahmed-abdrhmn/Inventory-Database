@@ -13,21 +13,24 @@ Do the following steps:
 3. Open a terminal in the root directory of the project
 4. To apply the migrations to your database enter the following command in the terminal:
 
-       dotnet ef database update --startup-project API --project DataAccess
+       dotnet ef database update --startup-project Startup --project Domain
     > Note: the migration will pre populate your database with objects, so you can immediately begin using the GET endpoints.
 
 5. To run the program, enter this command in the terminal:
 
-        dotnet run --project API
+        dotnet run --project Startup
 
 # Endpoints
+
+> Note: If you have postman in your machine, you can import InventoryDb.postman_collection.json to run prewritten sample requests.
+
 ## Inventory (Correspond to InventoryInDetail)
 ### Get all inventory documents
     GET http://localhost:5230/api/inventory
 ### Get inventory document by ID
-    GET http://localhost:5230/api/inventory/byid/:id
+    GET http://localhost:5230/api/inventory/:id
 ### Update inventory document
-    PUT http://localhost:5230/api/inventory/update/:id
+    PUT http://localhost:5230/api/inventory/:id
 
 with JSON body like this:
 ```
@@ -44,20 +47,20 @@ with JSON body like this:
 }
 ```
 ### Create new inventory document
-    POST http://localhost:5230/api/inventory/new
+    POST http://localhost:5230/api/inventory/
 
 with JSON body the same format as update
 
 ### Delete inventory document
-    DELETE http://localhost:5230/api/inventory/delete/:id
+    DELETE http://localhost:5230/api/inventory/:id
 
 ## Header (Corresponding to InventoryInHeader)
 ### Get all headers
     GET http://localhost:5230/api/headers
 ### Get header by ID
-    GET http://localhost:5230/api/header/byid/:id
+    GET http://localhost:5230/api/header/:id
 ### Update header
-    PUT http://localhost:5230/api/header/update/:id
+    PUT http://localhost:5230/api/header/:id
 
 with JSON body like this:
 ```
@@ -69,12 +72,12 @@ with JSON body like this:
 }
 ```
 ### Create new header
-    POST http://localhost:5230/api/header/new
+    POST http://localhost:5230/api/header/
 
 with JSON body the same format as update
 
 ### Delete header
-    DELETE http://localhost:5230/api/header/delete/:id
+    DELETE http://localhost:5230/api/header/:id
 
 ## Branch/Package/Item
 The branch, package, and item endpoints are similar to each other. Here I will document the branch endpoint but it will apply to the other endpoints as well.
@@ -83,10 +86,10 @@ The branch, package, and item endpoints are similar to each other. Here I will d
     GET http://localhost:5230/api/branch
 
 ### Get branch by ID
-    GET http://localhost:5230/api/branch/byid/:id
+    GET http://localhost:5230/api/branch/:id
 
 ### Update branch
-    PUT http://localhost:5230/api/branch/update/:id
+    PUT http://localhost:5230/api/branch/:id
 
 with JSON body like this:
 ```
@@ -95,8 +98,8 @@ with JSON body like this:
 }
 ```
 ### Create new branch
-    POST http://localhost:5230/api/branch/new
+    POST http://localhost:5230/api/branch/
 
 with JSON body the same format as update
 ### Delete branch
-    DELETE http://localhost:5230/api/branch/delete/:id
+    DELETE http://localhost:5230/api/branch/:id

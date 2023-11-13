@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "4ba83c73-d6d4-4263-b0cc-030389f234d2",
+		"name": "InventoryDb",
+		"description": "A list of premade request to test my api.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28047693"
+	},
+	"item": [
+		{
+			"name": "Get All",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5230/api/inventory/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5230",
+					"path": [
+						"api",
+						"inventory",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5230/api/inventory/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5230",
+					"path": [
+						"api",
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"InventoryInHeaderId\": 1,\n    \"Serial\": 3444,\n    \"ItemId\": 2,\n    \"PackageId\": 1,\n    \"BatchNumber\": \"78688\",\n    \"SerialNumber\": \"32290\",\n    \"ExpireDate\": \"2080-11-11\",\n    \"Quantity\": 10,\n    \"ConsumerPrice\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5230/api/inventory/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5230",
+					"path": [
+						"api",
+						"inventory",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"My Brain....\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5230/api/inventory/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5230",
+					"path": [
+						"api",
+						"inventory",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"inventoryInHeaderId\": 2,\n        \"serial\": 123,\n        \"itemId\": 3,\n        \"packageId\": 1,\n        \"batchNumber\": \"2322323\",\n        \"serialNumber\": \"454545\",\n        \"expireDate\": \"2015-05-12\",\n        \"quantity\": 12.400000,\n        \"consumerPrice\": 1\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5230/api/inventory/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5230",
+					"path": [
+						"api",
+						"inventory",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

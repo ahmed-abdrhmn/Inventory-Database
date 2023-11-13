@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Models;
-using DataAccess.Data;
+using Contracts.CreationDtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Models.CreationDtos;
-using DataAccess.Models;
+using Services;
 
 namespace API.Controllers
 {
@@ -15,103 +13,47 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class HeaderController : ControllerBase
     {
-        private readonly InventoryDbContext _inventoryDbContext; //depends injection
+        //Interfaces with service layer are injected at runtime
+        private readonly IInventoryInHeaderRepo _iInventoryInHeaderRepo;
 
-        public HeaderController(InventoryDbContext inventoryDbContext){
-            this._inventoryDbContext = inventoryDbContext;
-        }
+        public HeaderController(
+            IInventoryInHeaderRepo iInventoryInHeaderRepo){
+                _iInventoryInHeaderRepo = iInventoryInHeaderRepo;
+            }
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetAllInventoryInHeaders(){
-            var InventoryInHeaders = from i in _inventoryDbContext.InventoryInHeaders
-                    .Include(h => h.Branch) 
-                    .Include(h => h.InventoryInDetails) //<< -- TotalValue Column
-                select InventoryInHeaderDto.FromEntity(i);
-            
-            return Ok(InventoryInHeaders);
+        public IActionResult GetAllInventoryInHeaderes(){
+            var result = _iInventoryInHeaderRepo.GetAll();
+            return Ok(result);
         }
 
         [HttpGet]
-        [Route("ById/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult GetInventoryInHeaderById(int id){
-            var InventoryInHeader = (from i in _inventoryDbContext.InventoryInHeaders
-                    .Include(h => h.Branch) 
-                    .Include(h => h.InventoryInDetails) //<< -- TotalValue Column
-                where i.InventoryInHeaderId == id select InventoryInHeaderDto.FromEntity(i))
-                .SingleOrDefault();
-
-            if (InventoryInHeader is not null){
-                return Ok(InventoryInHeader);
-            }else{
-                return NotFound("Not InventoryInHeader with supplied Id exisits");
-            }
+            var result = _iInventoryInHeaderRepo.Get(id);
+            return Ok(result);
         }
 
         [HttpDelete]
-        [Route("Delete/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult DeleteInventoryInHeader(int id){
-            int result = _inventoryDbContext.InventoryInHeaders
-                            .Where(d => d.InventoryInHeaderId == id)
-                            .ExecuteDelete();
-            
-            if(result > 0){
-                return Ok($"InventoryInHeader number {id} successfully deleted");
-            }else{
-                return NotFound("No InventoryInHeader with supplied Id was found");
-            }
+            _iInventoryInHeaderRepo.Delete(id);
+            return NoContent();
         }
 
         [HttpPost]
-        [Route("New")]
+        [Route("")]
         public IActionResult NewInventoryInHeader(InventoryInHeaderCreationDto args){
-            Branch? relatedBranch = (from i in _inventoryDbContext.Branches
-                where i.BranchId == args.BranchId
-                select i).SingleOrDefault();
-            
-            if (relatedBranch is null){
-                return NotFound("Not Branch with supplied Id exisits");
-            }
-            
-            var toAdd = new InventoryInHeader(){
-                Branch = relatedBranch,
-                DocDate = args.DocDate!.Value,
-                Reference = args.Reference!,
-                Remarks = args.Remarks!
-            };
-
-            _inventoryDbContext.InventoryInHeaders.Add(toAdd);
-            _inventoryDbContext.SaveChanges();
-            return Ok(InventoryInHeaderDto.FromEntity(toAdd)); //this will include the id of the newly created InventoryInHeader
+            var result = _iInventoryInHeaderRepo.Create(args);
+            return Ok(result);
         }
 
         [HttpPut]
-        [Route("Update/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult UpdateInventoryInHeader(int id, InventoryInHeaderCreationDto args){
-            var toUpdate = (from i in _inventoryDbContext.InventoryInHeaders 
-                    .Include(h => h.InventoryInDetails) // Dont forget about TotalValue
-                where i.InventoryInHeaderId == id select i)
-                .SingleOrDefault();
-
-            if (toUpdate is null){
-                return NotFound("No InventoryInHeader with supplied Id was found");
-            }else{
-                Branch? relatedBranch = (from i in _inventoryDbContext.Branches
-                    where i.BranchId == args.BranchId
-                    select i).SingleOrDefault();
-                
-                if (relatedBranch is null){
-                    return NotFound("Not Branch with supplied Id exisits");
-                }
-
-                toUpdate.Branch = relatedBranch;
-                toUpdate.DocDate = args.DocDate!.Value;
-                toUpdate.Reference = args.Reference!;
-                toUpdate.Remarks = args.Remarks!;
-
-                _inventoryDbContext.SaveChanges();
-                return Ok(InventoryInHeaderDto.FromEntity(toUpdate)); //this will include the id of the newly created InventoryInHeader
-            }
+            var result = _iInventoryInHeaderRepo.Update(id,args);
+            return Ok(result);
         }        
     }
 }

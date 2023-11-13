@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Models;
-using DataAccess.Data;
+using Contracts.CreationDtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Models.CreationDtos;
-using DataAccess.Models;
+using Services;
 
 namespace API.Controllers
 {
@@ -15,71 +13,47 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class BranchController : ControllerBase
     {
-        private readonly InventoryDbContext _inventoryDbContext; //depends injection
+        //Interfaces with service layer are injected at runtime
+        private readonly IBranchRepo _iBranchRepo;
 
-        public BranchController(InventoryDbContext inventoryDbContext){
-            this._inventoryDbContext = inventoryDbContext;
-        }
+        public BranchController(
+            IBranchRepo iBranchRepo){
+                _iBranchRepo = iBranchRepo;
+            }
 
         [HttpGet]
         [Route("")]
         public IActionResult GetAllBranches(){
-            var branches = from i in _inventoryDbContext.Branches select BranchDto.FromEntity(i);
-            return Ok(branches);
+            var result = _iBranchRepo.GetAll();
+            return Ok(result);
         }
 
         [HttpGet]
-        [Route("ById/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult GetBranchById(int id){
-            var branch = (from i in _inventoryDbContext.Branches where i.BranchId == id select BranchDto.FromEntity(i))
-                            .SingleOrDefault();
-
-            if (branch is not null){
-                return Ok(branch);
-            }else{
-                return NotFound("Not Branch with supplied Id exisits");
-            }
+            var result = _iBranchRepo.Get(id);
+            return Ok(result);
         }
 
         [HttpDelete]
-        [Route("Delete/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult DeleteBranch(int id){
-            int result = _inventoryDbContext.Branches
-                            .Where(d => d.BranchId == id)
-                            .ExecuteDelete();
-            
-            if(result > 0){
-                return Ok($"Branch number {id} successfully deleted");
-            }else{
-                return NotFound("No branch with supplied Id was found");
-            }
+            _iBranchRepo.Delete(id);
+            return NoContent();
         }
 
         [HttpPost]
-        [Route("New")]
+        [Route("")]
         public IActionResult NewBranch(BranchCreationDto args){
-            var toAdd = new Branch(){
-                Name = args.Name!
-            };
-
-            _inventoryDbContext.Branches.Add(toAdd);
-            _inventoryDbContext.SaveChanges();
-            return Ok(BranchDto.FromEntity(toAdd)); //this will include the id of the newly created branch
+            var result = _iBranchRepo.Create(args);
+            return Ok(result);
         }
 
         [HttpPut]
-        [Route("Update/{id:int}")]
+        [Route("{id:int}")]
         public IActionResult UpdateBranch(int id, BranchCreationDto args){
-            var toUpdate = (from i in _inventoryDbContext.Branches where i.BranchId == id select i)
-                .SingleOrDefault();
-
-            if (toUpdate is null){
-                return NotFound("No branch with supplied Id was found");
-            }else{
-                toUpdate.Name = args.Name!;
-                _inventoryDbContext.SaveChanges();
-                return Ok(BranchDto.FromEntity(toUpdate)); //this will include the id of the newly created branch
-            }
+            var result = _iBranchRepo.Update(id,args);
+            return Ok(result);
         }        
     }
 }
