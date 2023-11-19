@@ -33,6 +33,11 @@ builder.Services
     .AddScoped<IPackageRepo,PackageRepo>()
     .AddScoped<IItemRepo,ItemRepo>();
 
+//Enable CORS
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy => policy.AllowAnyOrigin());
+});
+
 var app = builder.Build();
 
 //Handling the Exception in Contract.Exceptions
@@ -56,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
