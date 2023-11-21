@@ -9,7 +9,7 @@ This is a rest crud api for accessing inventory data that is persisted in a data
 # Setting up This Project
 Do the following steps:
 1. Clone this repository
-2. Open API/appsettings.json and replace the connection string there with that of your database
+2. Open Startup/appsettings.json and replace the connection string there with that of your database
 3. Open a terminal in the root directory of the project
 4. To apply the migrations to your database enter the following command in the terminal:
 
