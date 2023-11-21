@@ -13,7 +13,7 @@ Do the following steps:
 3. Open a terminal in the root directory of the project
 4. To apply the migrations to your database enter the following command in the terminal:
 
-       dotnet ef database update --startup-project Startup --project Domain
+       dotnet ef database update --startup-project Startup --project "Infrastructure Layer"
     > Note: the migration will pre populate your database with objects, so you can immediately begin using the GET endpoints.
 
 5. To run the program, enter this command in the terminal:
