@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.CreationDtos;
+using Presentation.CreationDtos;
+using Presentation.DisplayDtos;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -14,46 +16,60 @@ namespace API.Controllers
     public class HeaderController : ControllerBase
     {
         //Interfaces with service layer are injected at runtime
-        private readonly IInventoryInHeaderRepo _iInventoryInHeaderRepo;
+        private readonly IService<InventoryInHeader> _iihs;
 
-        public HeaderController(
-            IInventoryInHeaderRepo iInventoryInHeaderRepo){
-                _iInventoryInHeaderRepo = iInventoryInHeaderRepo;
-            }
+        public HeaderController(IService<InventoryInHeader> inventoryInHeaderService){
+            this._iihs = inventoryInHeaderService;
+        }
 
         [HttpGet]
         [Route("")]
         public IActionResult GetAllInventoryInHeaderes(){
-            var result = _iInventoryInHeaderRepo.GetAll();
-            return Ok(result);
+            var results = from i in _iihs.GetAll() select InventoryInHeaderDisplayDto.FromEntity(i);
+            return Ok(results);
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult GetInventoryInHeaderById(int id){
-            var result = _iInventoryInHeaderRepo.Get(id);
-            return Ok(result);
+            var result = _iihs.Get(id);
+            return Ok( InventoryInHeaderDisplayDto.FromEntity(result) );
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public IActionResult DeleteInventoryInHeader(int id){
-            _iInventoryInHeaderRepo.Delete(id);
+            _iihs.Delete(id);
             return NoContent();
         }
 
         [HttpPost]
         [Route("")]
         public IActionResult NewInventoryInHeader(InventoryInHeaderCreationDto args){
-            var result = _iInventoryInHeaderRepo.Create(args);
-            return Ok(result);
+            InventoryInHeader entity = new() {
+                BranchId = (int)args.BranchId!,
+                DocDate = (DateOnly)args.DocDate!,
+                Reference = args.Reference!,
+                Remarks = args.Remarks!
+            };
+
+            var result = _iihs.Create(entity);
+            return Ok(InventoryInHeaderDisplayDto.FromEntity(result));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public IActionResult UpdateInventoryInHeader(int id, InventoryInHeaderCreationDto args){
-            var result = _iInventoryInHeaderRepo.Update(id,args);
-            return Ok(result);
+            InventoryInHeader entity = new() {
+                Id = id,
+                BranchId = (int)args.BranchId!,
+                DocDate = (DateOnly)args.DocDate!,
+                Reference = args.Reference!,
+                Remarks = args.Remarks!
+            };
+
+            var result = _iihs.Update(entity);
+            return Ok(InventoryInHeaderDisplayDto.FromEntity(result));
         }        
     }
 }

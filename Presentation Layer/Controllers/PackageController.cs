@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.CreationDtos;
+using Presentation.CreationDtos;
+using Presentation.DisplayDtos;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -14,46 +16,55 @@ namespace API.Controllers
     public class PackageController : ControllerBase
     {
         //Interfaces with service layer are injected at runtime
-        private readonly IPackageRepo _iPackageRepo;
+        private readonly IService<Package> _packageService;
 
         public PackageController(
-            IPackageRepo iPackageRepo){
-                _iPackageRepo = iPackageRepo;
-            }
+        IService<Package> packageService){
+            this._packageService = packageService;
+        }
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetAllPackagees(){
-            var result = _iPackageRepo.GetAll();
-            return Ok(result);
+        public IActionResult GetAllPackages(){
+            var results = from i in _packageService.GetAll() select PackageDisplayDto.FromEntity(i);
+            return Ok(results);
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult GetPackageById(int id){
-            var result = _iPackageRepo.Get(id);
-            return Ok(result);
+            var result = _packageService.Get(id);
+            return Ok(PackageDisplayDto.FromEntity(result));
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public IActionResult DeletePackage(int id){
-            _iPackageRepo.Delete(id);
+            _packageService.Delete(id);
             return NoContent();
         }
 
         [HttpPost]
         [Route("")]
         public IActionResult NewPackage(PackageCreationDto args){
-            var result = _iPackageRepo.Create(args);
-            return Ok(result);
+            Package entity = new() {
+                Name = args.Name!
+            };
+
+            var result = _packageService.Create(entity);
+            return Ok(PackageDisplayDto.FromEntity(result));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public IActionResult UpdatePackage(int id, PackageCreationDto args){
-            var result = _iPackageRepo.Update(id,args);
-            return Ok(result);
+            Package entity = new() {
+                Id = id,
+                Name = args.Name!
+            };
+
+            var result = _packageService.Update(entity);
+            return Ok(PackageDisplayDto.FromEntity(result));
         }        
     }
 }

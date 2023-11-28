@@ -10,16 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class InventoryInHeader
+    public class InventoryInHeader: BaseEntity
     {
-        public int InventoryInHeaderId {get; set;} //TypeNameId is automatically primary key
+        //public int InventoryInHeaderId {get; set;} //TypeNameId is automatically primary key
         public Branch Branch {get; set;} = null!; //should automatically create the foreign key
+        public int BranchId {get; set;} //foreign key
         public DateOnly DocDate { get; set; }
         [MaxLength(50)]
         public string Reference { get; set; } = null!;
-        //computed fields should not be included in database
-        //[Precision(18,6)]
-        //public decimal TotalValue { get; set; }
+        [Precision(18,6)]
+        public decimal TotalValue { get; set; }
         [MaxLength(300)]
         public string Remarks { get; set; } = null!;
         public ICollection<InventoryInDetail> InventoryInDetails { get; set; } = new List<InventoryInDetail>();

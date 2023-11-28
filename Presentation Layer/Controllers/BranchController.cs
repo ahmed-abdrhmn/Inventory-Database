@@ -2,58 +2,69 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.CreationDtos;
+using Presentation.CreationDtos;
+using Presentation.DisplayDtos;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
 
-namespace API.Controllers
+namespace Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class BranchController : ControllerBase
     {
         //Interfaces with service layer are injected at runtime
-        private readonly IBranchRepo _iBranchRepo;
+        private readonly IService<Branch> _branchService;
 
         public BranchController(
-            IBranchRepo iBranchRepo){
-                _iBranchRepo = iBranchRepo;
-            }
+        IService<Branch> branchService){
+            this._branchService = branchService;
+        }
 
         [HttpGet]
         [Route("")]
         public IActionResult GetAllBranches(){
-            var result = _iBranchRepo.GetAll();
-            return Ok(result);
+            var results = from i in _branchService.GetAll() select BranchDisplayDto.FromEntity(i);
+            return Ok(results);
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult GetBranchById(int id){
-            var result = _iBranchRepo.Get(id);
-            return Ok(result);
+            var result = _branchService.Get(id);
+            return Ok(BranchDisplayDto.FromEntity(result));
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public IActionResult DeleteBranch(int id){
-            _iBranchRepo.Delete(id);
+            _branchService.Delete(id);
             return NoContent();
         }
 
         [HttpPost]
         [Route("")]
         public IActionResult NewBranch(BranchCreationDto args){
-            var result = _iBranchRepo.Create(args);
-            return Ok(result);
+            Branch entity = new() {
+                Name = args.Name!
+            };
+
+            var result = _branchService.Create(entity);
+            return Ok(BranchDisplayDto.FromEntity(result));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public IActionResult UpdateBranch(int id, BranchCreationDto args){
-            var result = _iBranchRepo.Update(id,args);
-            return Ok(result);
+            Branch entity = new() {
+                Id = id,
+                Name = args.Name!
+            };
+
+            var result = _branchService.Update(entity);
+            return Ok(BranchDisplayDto.FromEntity(result));
         }        
     }
 }

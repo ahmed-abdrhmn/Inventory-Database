@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 
-namespace Domain.Data
+namespace Infrastructure.Data
 {
     public class InventoryDbContext: DbContext
     {

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.CreationDtos;
+using Presentation.CreationDtos;
+using Presentation.DisplayDtos;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -14,46 +16,55 @@ namespace API.Controllers
     public class ItemController : ControllerBase
     {
         //Interfaces with service layer are injected at runtime
-        private readonly IItemRepo _iItemRepo;
+        private readonly IService<Item> _itemService;
 
         public ItemController(
-            IItemRepo iItemRepo){
-                _iItemRepo = iItemRepo;
-            }
+        IService<Item> itemService){
+            this._itemService = itemService;
+        }
 
         [HttpGet]
         [Route("")]
         public IActionResult GetAllItemes(){
-            var result = _iItemRepo.GetAll();
-            return Ok(result);
+            var results = from i in _itemService.GetAll() select ItemDisplayDto.FromEntity(i);
+            return Ok(results);
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult GetItemById(int id){
-            var result = _iItemRepo.Get(id);
-            return Ok(result);
+            var result = _itemService.Get(id);
+            return Ok(ItemDisplayDto.FromEntity(result));
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public IActionResult DeleteItem(int id){
-            _iItemRepo.Delete(id);
+            _itemService.Delete(id);
             return NoContent();
         }
 
         [HttpPost]
         [Route("")]
         public IActionResult NewItem(ItemCreationDto args){
-            var result = _iItemRepo.Create(args);
-            return Ok(result);
+            Item entity = new() {
+                Name = args.Name!
+            };
+
+            var result = _itemService.Create(entity);
+            return Ok(ItemDisplayDto.FromEntity(result));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public IActionResult UpdateItem(int id, ItemCreationDto args){
-            var result = _iItemRepo.Update(id,args);
-            return Ok(result);
+            Item entity = new() {
+                Id = id,
+                Name = args.Name!
+            };
+
+            var result = _itemService.Update(entity);
+            return Ok(ItemDisplayDto.FromEntity(result));
         }        
     }
 }

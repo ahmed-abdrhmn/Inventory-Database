@@ -7,13 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class InventoryInDetail
+    public class InventoryInDetail: BaseEntity
     {
-        public int InventoryInDetailId { get; set; }
+        //public int InventoryInDetailId { get; set; }
         public InventoryInHeader InventoryInHeader { get; set; } = null!;
+        public int InventoryInHeaderId {get; set;} //foreign key
         public int Serial { get; set; }
         public Item Item { get; set; } = null!;
+        public int ItemId {get; set;} //foreign key
         public Package Package { get; set; } = null!;
+        public int PackageId {get; set;} //foreign key
         [MaxLength(50)]
         public string BatchNumber { get; set; } = null!;
         [MaxLength(50)]
@@ -23,9 +26,8 @@ namespace Domain.Models
         public decimal Quantity { get; set; }
         [Precision(18,6)]
         public decimal ConsumerPrice { get; set; }
-        //computed fields should not be included in database
-        //[Precision(18,6)]
-        //public decimal TotalValue { get; set; }
+        [Precision(18,6)]
+        public decimal TotalValue { get; set; }
 
     }
 }

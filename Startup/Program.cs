@@ -1,12 +1,14 @@
 //using API.Service;
-using API.Controllers;
-using Contracts.Exceptions;
-using Domain.Data;
+using Presentation.Controllers;
+using Domain.Exceptions;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Repository;
+using Infrastructure;
 using Services;
-using Services.Impl;
+using Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,13 +27,17 @@ builder.Services.AddDbContext<InventoryDbContext>(option => {
     option.UseMySql(conn,ServerVersion.AutoDetect(conn));
 });
 
-//Adding Scopes to configure dependency injection
+// Adding Scopes to configure dependency injection
+// Generic Repository
 builder.Services
-    .AddScoped<IBranchRepo,BranchRepo>()
-    .AddScoped<IInventoryInDetailRepo,InventoryInDetailRepo>()
-    .AddScoped<IInventoryInHeaderRepo,InventoryInHeaderRepo>()
-    .AddScoped<IPackageRepo,PackageRepo>()
-    .AddScoped<IItemRepo,ItemRepo>();
+    .AddScoped(typeof(IRepository<>),typeof(Repository<>));
+
+builder.Services
+    .AddScoped<IService<InventoryInHeader>,InventoryInHeaderService>()
+    .AddScoped<IService<InventoryInDetail>,InventoryInDetailService>()
+    .AddScoped<IService<Item>,ItemService>()
+    .AddScoped<IService<Package>,PackageService>()
+    .AddScoped<IService<Branch>,BranchService>();
 
 //Enable CORS
 builder.Services.AddCors(options => {

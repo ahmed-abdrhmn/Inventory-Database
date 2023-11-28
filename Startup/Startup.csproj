@@ -19,10 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Repository Layer\Services.csproj" />
+    <ProjectReference Include="..\Repository Layer\Repository.csproj" />
     <ProjectReference Include="..\Domain Layer\Domain.csproj" />
-    <ProjectReference Include="..\Infrastructure Layer\Services.Impl.csproj" />
-    <ProjectReference Include="..\Presentation Layer\API.csproj" />
+    <ProjectReference Include="..\Infrastructure Layer\Infrastructure.csproj" />
+    <ProjectReference Include="..\Service Layer\Services.csproj" />
+    <ProjectReference Include="..\Presentation Layer\Presentation.csproj" />
   </ItemGroup>
 
 </Project>
