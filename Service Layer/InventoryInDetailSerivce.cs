@@ -43,7 +43,13 @@ namespace Services
         }
 
         public void Delete(int id){
+            var detail = _detail_repo.GetById(id);
             _detail_repo.Delete(id);
+
+            //we must update the total value field in the related header after deleting an inventory in detail
+            var header = _header_repo.GetById(detail.InventoryInHeaderId);
+            TotalValueCalculator.ComputeTotalValue(header,_detail_repo);
+            _header_repo.Update(header);
         }
 
         public InventoryInDetail Update(InventoryInDetail detail){
