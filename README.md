@@ -24,7 +24,7 @@ Do the following steps:
 
 > Note: If you have postman in your machine, you can import InventoryDb.postman_collection.json to run prewritten sample requests.
 
-## Inventory (Correspond to InventoryInDetail)
+## Inventory
 ### Get all inventory documents
     GET http://localhost:5230/api/inventory
 ### Get inventory document by ID
@@ -35,17 +35,39 @@ Do the following steps:
 with JSON body like this:
 ```
 {
-    "inventoryInHeaderId": 1,
-    "serial": 123,
-    "itemId": 3,
-    "packageId": 3,
-    "batchNumber": "2323232323",
-    "serialNumber": "4545454545",
-    "expireDate": "2024-05-12",
-    "quantity": 12.400000,
-    "consumerPrice": 19.200000
+    "branch": {
+        "name": "Western Branch",
+        "id": 3
+    },
+    "docDate": "2023-12-07",
+    "reference": "Another Random Reference",
+    "remarks": "All Remarks",
+    "inventoryInDetails": [
+        {
+            "serial": 123,
+            "item": {
+                "name": "Tomato",
+                "id": 3
+            },
+            "package": {
+                "name": "Metal Container",
+                "id": 3
+            },
+            "batchNumber": "67676767676",
+            "serialNumber": "9090909090",
+            "expireDate": "2030-01-11",
+            "quantity": 78.900000,
+            "consumerPrice": 0.120000,
+            "id": 2
+        },
+        ...
+    ]
 }
 ```
+For the Package, Item, and Branch objects, the system will check if the given id exists already. If it does, the system will update it, otherwise it will create a new one with the Id you provided. If you don't provide an id, a new object with automatic id will be created. Right now there is no way to just delete one of these objects.
+
+> Note: You should take the JSON from the GetbyId endpoint, make the changes you want, then send it to this endpoint.
+
 ### Create new inventory document
     POST http://localhost:5230/api/inventory/
 
@@ -53,53 +75,3 @@ with JSON body the same format as update
 
 ### Delete inventory document
     DELETE http://localhost:5230/api/inventory/:id
-
-## Header (Corresponding to InventoryInHeader)
-### Get all headers
-    GET http://localhost:5230/api/headers
-### Get header by ID
-    GET http://localhost:5230/api/header/:id
-### Update header
-    PUT http://localhost:5230/api/header/:id
-
-with JSON body like this:
-```
-{
-    "BranchId": 1,
-    "DocDate": "2030-01-01",
-    "Reference": "123456",
-    "Remarks": "Performing Well"
-}
-```
-### Create new header
-    POST http://localhost:5230/api/header/
-
-with JSON body the same format as update
-
-### Delete header
-    DELETE http://localhost:5230/api/header/:id
-
-## Branch/Package/Item
-The branch, package, and item endpoints are similar to each other. Here I will document the branch endpoint but it will apply to the other endpoints as well.
-
-### Get all branches
-    GET http://localhost:5230/api/branch
-
-### Get branch by ID
-    GET http://localhost:5230/api/branch/:id
-
-### Update branch
-    PUT http://localhost:5230/api/branch/:id
-
-with JSON body like this:
-```
-{
-    "Name":"New Branch Name"
-}
-```
-### Create new branch
-    POST http://localhost:5230/api/branch/
-
-with JSON body the same format as update
-### Delete branch
-    DELETE http://localhost:5230/api/branch/:id

@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Adding Controllers from another project
-var controllerAssembly = typeof(BranchController).Assembly;
+var controllerAssembly = typeof(InventoryController).Assembly;
 builder.Services.AddControllers().AddApplicationPart(controllerAssembly);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -25,19 +25,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<InventoryDbContext>(option => {
     string conn = builder.Configuration.GetConnectionString("Local")!;
     option.UseMySql(conn,ServerVersion.AutoDetect(conn));
+    option.EnableSensitiveDataLogging();
 });
 
 // Adding Scopes to configure dependency injection
-// Generic Repository
-builder.Services
-    .AddScoped(typeof(IRepository<>),typeof(Repository<>));
+// Repository
+builder.Services.AddScoped<IRepository<InventoryInHeader>,DocumentRepository>();
 
-builder.Services
-    .AddScoped<IService<InventoryInHeader>,InventoryInHeaderService>()
-    .AddScoped<IService<InventoryInDetail>,InventoryInDetailService>()
-    .AddScoped<IService<Item>,ItemService>()
-    .AddScoped<IService<Package>,PackageService>()
-    .AddScoped<IService<Branch>,BranchService>();
+// Services
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 //Enable CORS
 builder.Services.AddCors(options => {

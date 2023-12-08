@@ -9,15 +9,12 @@ namespace Services
 {
     internal static class TotalValueCalculator
     {
-        static public void ComputeTotalValue(InventoryInDetail details){
-            details.TotalValue = details.ConsumerPrice * details.Quantity;
-        }
-
-        static public void ComputeTotalValue(InventoryInHeader header, IRepository<InventoryInDetail> detail_repo){
-            decimal totalValue = (from i in detail_repo.GetAll()
-                                    where i.InventoryInHeaderId == header.Id
-                                    select i.TotalValue).Sum();
-            header.TotalValue = totalValue;
+        static public void ComputeTotalValue(InventoryInHeader doc){
+            doc.TotalValue = 0.0M;
+            foreach(var i in doc.InventoryInDetails){
+                i.TotalValue = i.Quantity * i.ConsumerPrice;
+                doc.TotalValue += i.TotalValue;
+            }
         }
     }
 }

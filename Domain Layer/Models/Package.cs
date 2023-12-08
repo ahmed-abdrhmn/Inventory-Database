@@ -11,6 +11,5 @@ namespace Domain.Models
         // [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //bytes are not auto increment by default
         // public byte PackageId { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<InventoryInDetail> InventoryInDetails { get; set; } = new List<InventoryInDetail>(); //One to mamy with Details
     }
 }

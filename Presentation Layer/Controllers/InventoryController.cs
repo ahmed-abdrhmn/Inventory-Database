@@ -2,85 +2,59 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Presentation.CreationDtos;
-using Presentation.DisplayDtos;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Services;
 
-namespace API.Controllers
+namespace Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class InventoryController : ControllerBase
     {
         //Interfaces with service layer are injected at runtime
-        private readonly IService<InventoryInDetail> _iids;
+        private readonly IDocumentService _documentService;
 
-        public InventoryController(IService<InventoryInDetail> inventoryInDetailService){
-            this._iids = inventoryInDetailService;
+        public InventoryController(IDocumentService documentService){
+            this._documentService = documentService;
         }
 
         [HttpGet]
         [Route("")]
-        public IActionResult GetAllInventoryInDetailes(){
-            var results = from i in _iids.GetAll() select InventoryInDetailDisplayDto.FromEntity(i);
+        public IActionResult GetAllInventoryDocuments(){
+            var results = _documentService.GetAll();
             return Ok(results);
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public IActionResult GetInventoryInDetailById(int id){
-            var result = _iids.Get(id);
-            return Ok( InventoryInDetailDisplayDto.FromEntity(result) );
+        public IActionResult GetInventoryDocumentsById(int id){
+            var result = _documentService.GetById(id);
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("{id:int}")]
-        public IActionResult DeleteInventoryInDetail(int id){
-            _iids.Delete(id);
+        public IActionResult DeleteInventoryDocument(int id){
+            _documentService.Delete(id);
             return NoContent();
         }
 
         [HttpPost]
         [Route("")]
-        public IActionResult NewInventoryInDetail(InventoryInDetailCreationDto args){
-            InventoryInDetail entity = new() {
-                InventoryInHeaderId = (int)args.InventoryInHeaderId!,
-                Serial = (int)args.Serial!,
-                ItemId = (int)args.ItemId!,
-                PackageId = (int)args.PackageId!,
-                BatchNumber = args.BatchNumber!,
-                SerialNumber = args.SerialNumber!,
-                ExpireDate = (DateOnly)args.ExpireDate!,
-                Quantity = (decimal)args.Quantity!,
-                ConsumerPrice = (decimal)args.ConsumerPrice!,
-            };
-
-            var result = _iids.Create(entity);
-            return Ok(InventoryInDetailDisplayDto.FromEntity(result));
+        public IActionResult NewInventoryDocument(InventoryInHeader args){
+            var result = _documentService.Create(args);
+            return Ok(result);
         }
 
         [HttpPut]
         [Route("{id:int}")]
-        public IActionResult UpdateInventoryInDetail(int id, InventoryInDetailCreationDto args){
-            InventoryInDetail entity = new() {
-                Id = id,
-                InventoryInHeaderId = (int)args.InventoryInHeaderId!,
-                Serial = (int)args.Serial!,
-                ItemId = (int)args.ItemId!,
-                PackageId = (int)args.PackageId!,
-                BatchNumber = args.BatchNumber!,
-                SerialNumber = args.SerialNumber!,
-                ExpireDate = (DateOnly)args.ExpireDate!,
-                Quantity = (decimal)args.Quantity!,
-                ConsumerPrice = (decimal)args.ConsumerPrice!,
-            };
-
-            var result = _iids.Update(entity);
-            return Ok(InventoryInDetailDisplayDto.FromEntity(result));
+        public IActionResult UpdateInventoryDocument(int id, InventoryInHeader args){
+            args.Id = id;
+            var result = _documentService.Update(args);
+            return Ok(result);
         }        
     }
 }

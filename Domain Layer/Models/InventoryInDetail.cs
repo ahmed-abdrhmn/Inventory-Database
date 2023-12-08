@@ -10,13 +10,9 @@ namespace Domain.Models
     public class InventoryInDetail: BaseEntity
     {
         //public int InventoryInDetailId { get; set; }
-        public InventoryInHeader InventoryInHeader { get; set; } = null!;
-        public int InventoryInHeaderId {get; set;} //foreign key
         public int Serial { get; set; }
         public Item Item { get; set; } = null!;
-        public int ItemId {get; set;} //foreign key
         public Package Package { get; set; } = null!;
-        public int PackageId {get; set;} //foreign key
         [MaxLength(50)]
         public string BatchNumber { get; set; } = null!;
         [MaxLength(50)]

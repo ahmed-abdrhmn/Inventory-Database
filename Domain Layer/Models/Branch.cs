@@ -10,6 +10,5 @@ namespace Domain.Models
     {
         //public short BranchId { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<InventoryInHeader> InventoryInHeaders { get; set; } = new List<InventoryInHeader>(); //Assuming One to many relationship btw branch and header
     }
 }

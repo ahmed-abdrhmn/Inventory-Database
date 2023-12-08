@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public class Item: BaseEntity
+    //This class only exists to enfore the aggregate root
+    public class AggregateRoot: BaseEntity
     {
-        //public int ItemId { get; set; }
-        public string Name { get; set; } = null!;
     }
 }

@@ -10,11 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class InventoryInHeader: BaseEntity
+    public class InventoryInHeader: AggregateRoot
     {
         //public int InventoryInHeaderId {get; set;} //TypeNameId is automatically primary key
         public Branch Branch {get; set;} = null!; //should automatically create the foreign key
-        public int BranchId {get; set;} //foreign key
         public DateOnly DocDate { get; set; }
         [MaxLength(50)]
         public string Reference { get; set; } = null!;
